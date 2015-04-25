@@ -6,3 +6,14 @@
    (cons prime
          (lazy-seq
           (lazy-trialdivision (filter #(not= 0 (mod % prime)) nums))))))
+
+;; simplified from http://stackoverflow.com/questions/960980/fast-prime-number-generation-in-clojure
+;; removed optimization for readability
+(defn java-sieve [n]
+  "returns a BitSet with bits set for each prime up to n"
+  (let [bs (java.util.BitSet. n)]
+    (.flip bs 2 n)
+    (doseq [p (range 2 (Math/sqrt n))]
+      (if (.get bs p)
+        (doseq [q (range (* p p) n p)] (.clear bs q))))
+    bs))
