@@ -48,8 +48,12 @@
                               factor))]
     (defn primes-step [table d]
       (if-let [factors (get table d)]
+        ;a composite found in the table we shift and reinsert
         (recur (reduce #(reinsert %1 d %2) (dissoc table d) factors)
                (inc d))
-        (lazy-seq (cons d (primes-step (assoc table (* d d) (list d))
+        ; d is prime
+        (lazy-seq (cons d (primes-step (assoc table
+                                         (* d d) ;insert prime squared
+                                         (list d)) ;prime is the only factor now
                                        (inc d))))))
     (primes-step {} 2)))
