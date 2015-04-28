@@ -35,3 +35,21 @@
                         6 4 6 8 4 2 4 2 4 8 6 4 6 2  4  6
                         2 6 6 4 2 4 6 2 6 4 2 4 2 10 2 10])]
       (primes-from 11 wheel)))))
+
+;; found in the same stackoverflow thread
+;; https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+(defn lazy-eratosthenes
+  "genuinely lazy Eratosthenes sieve"
+  []
+  (let [reinsert (fn [table composite factor]
+                   (update-in table
+                              [(+ factor composite)]
+                              conj
+                              factor))]
+    (defn primes-step [table d]
+      (if-let [factors (get table d)]
+        (recur (reduce #(reinsert %1 d %2) (dissoc table d) factors)
+               (inc d))
+        (lazy-seq (cons d (primes-step (assoc table (* d d) (list d))
+                                       (inc d))))))
+    (primes-step {} 2)))
