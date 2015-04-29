@@ -1,0 +1,27 @@
+\documentclass{beamer}
+
+\usepackage{minted}
+
+\begin{document}
+\begin{frame}[fragile]
+\frametitle{from clojuredocs with a bit of destructuring}
+\begin{minted}[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+%bgcolor=LightGray,
+fontsize=\small,
+linenos
+]{clojure}
+(defn lazy-trialdivision
+  ([] (lazy-trialdivision (iterate inc 2)))
+  ([[prime & nums]]
+    (cons prime
+          (lazy-seq
+              (lazy-trialdivision (filter
+                                     #(not= 0 (mod % prime))
+                                     nums))))))
+\end{minted}
+
+\end{frame}
+\end{document}
