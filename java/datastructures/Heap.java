@@ -31,28 +31,35 @@ public class Heap<T extends Comparable<T>>{
     }
 
     public T extract_max(){
-        return null;
+        T max = list.get(0);
+        list.set(0, list.get(list.size()-1));
+        list.remove(list.size()-1);
+        max_heapify(1);
+        return max;
     }
 
-    private void max_heapify(int start){
-        int leftidx = indx(left(start));
-        int rightidx = indx(right(start));
-        int startidx = indx(start);
-        T leftval = list.get(leftidx);
-        T rightval = list.get(rightidx);
-        T val = list.get(startidx);
-        if ((val.compareTo(leftval) >= 0) && (val.compareTo(rightval)>=0)) {
-            return;
+    private void max_heapify(int root){
+        int rootidx = indx(root);
+        T rootval = list.get(rootidx);
+        int largestidx = rootidx;
+        T largestval = rootval;
+
+        int leftidx = indx(left(root));
+        int rightidx = indx(right(root));
+        int[] childindices = {leftidx, rightidx};
+        for (int childidx : childindices){
+            if (childidx < list.size()) {
+                T childval = list.get(childidx);
+                if (childval.compareTo(largestval) > 0){
+                    largestidx = childidx;
+                    largestval = childval;
+                }
+            }
         }
-        if (leftval.compareTo(rightval) >= 0) {
-            list.set(startidx, leftval);
-            list.set(leftidx, val);
-            max_heapify(left(start));
-        }
-        else{
-            list.set(startidx, rightval);
-            list.set(rightidx, val);
-            max_heapify(right(start));
+        if (largestidx != rootidx){
+            list.set(rootidx, largestval);
+            list.set(largestidx, rootval);
+            max_heapify(largestidx+1); //index correction
         }
     }
 
@@ -71,9 +78,10 @@ public class Heap<T extends Comparable<T>>{
         heap.insert(6);
         heap.insert(7);
         heap.insert(152);
-        System.out.println(Heap.left(1));
-        System.out.println(Heap.parent(2));
-        System.out.println(Heap.parent(3));
+        heap.insert(3);
+        heap.insert(333);
+        heap.insert(2);
         System.out.println(heap);
+        System.out.println(heap.extract_max());
     }
 }
