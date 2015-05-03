@@ -1,15 +1,35 @@
+/*
+ * Generic implementation of the heap data structure.
+ * Favoring readability instead of low level optimization.
+ * A heap can store Comparable elements.
+ */
 package datastructures;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class Heap<T extends Comparable<T>>{
-    private  List<T> list;
 
+public class Heap<T extends Comparable<T>>{
+    private  List<T> list; //the binary tree elements are stored in a list
+
+    //helper functions for calculating indices of binary tree elements
+    private static int left(int i) {return 2*i;}
+    private static int right(int i) {return (2*i)+1;}
+    private static int parent(int i) {return (int) (i/ 2);}
+    private static int indx(int i) {return i-1;} //dodging 0-based indexing
+    //just a classic swap in the list
+    private void swap(int idx1, int idx2){
+        T val1 = list.get(idx1);
+        list.set(idx1, list.get(idx2));
+        list.set(idx2, val1);
+    }
+
+    //constructing an empty heap
     public Heap(){
         list = new ArrayList<T>();
     }
 
+    ///INSERT///////////////////////////////////////////////////////////////////
     public void insert(T t){
         list.add(t);
         int idx = indx(list.size());
@@ -24,12 +44,12 @@ public class Heap<T extends Comparable<T>>{
         T pval = list.get(pidx);
         T kval = list.get(kidx);
         if (kval.compareTo(pval)>0){
-            list.set(pidx, kval);
-            list.set(kidx, pval);
+            swap(pidx,kidx);
             bubble_up(p);
         }
     }
 
+    ///EXTRACT//////////////////////////////////////////////////////////////////
     public T extract_max(){
         T max = list.get(0);
         list.set(0, list.get(list.size()-1));
@@ -41,12 +61,11 @@ public class Heap<T extends Comparable<T>>{
     private void max_heapify(int root){
         int rootidx = indx(root);
         T rootval = list.get(rootidx);
-        int largestidx = rootidx;
+        int largestidx = rootidx; //assuming first that the root is the largest
         T largestval = rootval;
 
-        int leftidx = indx(left(root));
-        int rightidx = indx(right(root));
-        int[] childindices = {leftidx, rightidx};
+        //checking children, update largest if needed
+        int[] childindices = {indx(left(root)), indx(right(root))};
         for (int childidx : childindices){
             if (childidx < list.size()) {
                 T childval = list.get(childidx);
@@ -57,21 +76,16 @@ public class Heap<T extends Comparable<T>>{
             }
         }
         if (largestidx != rootidx){
-            list.set(rootidx, largestval);
-            list.set(largestidx, rootval);
+            swap(largestidx, rootidx);
             max_heapify(largestidx+1); //index correction
         }
     }
-
-    private static int left(int i) {return 2*i;}
-    private static int right(int i) {return (2*i)+1;}
-    private static int parent(int i) {return (int) (i/ 2);}
-    private static int indx(int i) {return i-1;} //dodging 0-based indexing
 
     public String toString(){
         return list.toString();
     }
 
+    //better to import the class into Clojure REPL and play with Heap there
     public static void main(String[] args){
         Heap<Integer> heap = new Heap<Integer>();
         heap.insert(42);
@@ -82,6 +96,8 @@ public class Heap<T extends Comparable<T>>{
         heap.insert(333);
         heap.insert(2);
         System.out.println(heap);
+        System.out.println(heap.extract_max());
+        System.out.println(heap.extract_max());
         System.out.println(heap.extract_max());
     }
 }
