@@ -1,3 +1,6 @@
+/*
+ * A naive implementation of the RSA algorithm.
+ */
 package cryptography;
 
 //immutable class
@@ -20,4 +23,19 @@ public class RSA{
         this.e = e;
         this.d = d;
     }
+
+    public static long modularPow(long base, long exponent, long modulus){
+        long result = base;
+        for (int i = 1; i < exponent; i++){
+            result = (result * base) % modulus;
+        }
+        return result;
+    }
+
+    //encryption key is (n,e)
+    public long encryptBlock(long block) {return  modularPow(block,e,n);}
+
+    //encryption key is (n,d)
+    public long decryptBlock(long block) {return  modularPow(block,d,n);}
+
 }
