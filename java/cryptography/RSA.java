@@ -1,5 +1,6 @@
 /*
- * A naive implementation of the RSA algorithm.
+ * A naive implementation of the RSA algorithm. For demonstration purposes only,
+ * 63-bit encryption is just a toy version.
  */
 package cryptography;
 
