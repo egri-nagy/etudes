@@ -3,6 +3,8 @@
  */
 package cryptography;
 
+import java.util.stream.LongStream;
+
 //immutable class
 public class RSA{
     // p and q are 'big' primes (limited to 63-bits here)
@@ -24,12 +26,20 @@ public class RSA{
         this.d = d;
     }
 
-    public static long modularPow(long base, long exponent, long modulus){
+    //good old imperative style
+    public static long oldModularPow(long base, long exponent, long modulus){
         long result = base;
         for (int i = 1; i < exponent; i++){
             result = (result * base) % modulus;
         }
         return result;
+    }
+
+    //functional style
+    public static long modularPow(long base, long exponent, long modulus){
+        return LongStream.range(1, exponent)
+            .map( x -> base)
+            .reduce(base, (r,x)->((r*x)% modulus));
     }
 
     //encryption key is (n,e)
