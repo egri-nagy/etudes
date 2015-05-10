@@ -1,18 +1,11 @@
 (ns sort)
 
-(defn cut-in-half
-  "cutting a collection into (almost) equal halves"
-  [coll]
-  (let [n (count coll)
-        half (if (even? n) (/ n 2) (/ (inc n) 2))]
-    (partition-all half coll)))
-
 (defn merge-sort
   "sorting the given collection with merge-sort"
   [coll]
   (if (or (empty? coll) (= 1 (count coll)))
     coll
-    (let [[l1 l2] (cut-in-half coll)]
+    (let [[l1 l2] (split-at (/ (count coll) 2) coll)]
       ;recursive call
       (loop [r [] l1 (merge-sort l1) l2 (merge-sort l2)]
         ;merging
