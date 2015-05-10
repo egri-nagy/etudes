@@ -1,4 +1,4 @@
-(ns merge-sort)
+(ns sort)
 
 (defn cut-in-half
   "cutting a collection into (almost) equal halves"
