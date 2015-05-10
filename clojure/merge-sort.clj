@@ -3,10 +3,9 @@
 (defn cut-in-half
   "cutting a collection into (almost) equal halves"
   [coll]
-  (let [n (count coll)]
-    (if (even? n)
-      (partition-all (/ n 2) coll)
-      (partition-all (/ (inc n) 2) coll))))
+  (let [n (count coll)
+        half (if (even? n) (/ n 2) (/ (inc n) 2))]
+    (partition-all half coll)))
 
 (defn merge-sort
   [coll]
