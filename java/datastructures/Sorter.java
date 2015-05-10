@@ -46,6 +46,9 @@ public class Sorter{
 
 
     ///MERGE SORT////////////////////////////////////////////////////
+    public static Comparable[] mergeSort(Comparable[] coll){
+        return mergeSort(coll, 0, coll.length);
+    }
     // p - start, q - finish
     public static Comparable[] mergeSort(Comparable[] coll, int p, int q){
         if ((q-p)==1) { return new Comparable[]{coll[p]};}
@@ -83,6 +86,6 @@ public class Sorter{
         String[] words = new String[]{"xx", "blah", "hey", "yo"};
         //quickSort(words);
         //Arrays.stream(words).forEach(System.out::println);
-        Arrays.stream(mergeSort(words,0, words.length)).forEach(System.out::println);
+        Arrays.stream(mergeSort(words)).forEach(System.out::println);
     }
 }
