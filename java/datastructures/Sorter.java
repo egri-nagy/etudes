@@ -44,9 +44,45 @@ public class Sorter{
         coll[idx2] = val1;
     }
 
+
+    ///MERGE SORT////////////////////////////////////////////////////
+    // p - start, q - finish
+    public static Comparable[] mergeSort(Comparable[] coll, int p, int q){
+        if ((q-p)==1) { return new Comparable[]{coll[p]};}
+        int mid = (q-p)/2;
+        Comparable[] l1 = mergeSort(coll,p, p+mid);
+        Comparable[] l2 = mergeSort(coll,p+mid, q);
+        //now merging
+        Comparable[] result = new Comparable[l1.length + l2.length];
+        int j = 0;
+        int k = 0;
+        for (int i = 0; i < result.length; i++){
+            if (j == l1.length) { //we've exhausted l1
+                System.arraycopy(l2, k, result, i, result.length-i);break;
+            }
+            else if (k == l2.length){ //we've exhausted l2
+                System.arraycopy(l1, j, result, i, result.length-i);break;
+            }
+            else{
+                if (l1[j].compareTo(l2[k])<=0){
+                    result[i] = l1[j];
+                    j++;
+                }
+                else{
+                    result[i] = l2[k];
+                    k++;
+                }
+            }
+        }
+        return result;
+    }
+
+
+
     public static void main (String[] args){
         String[] words = new String[]{"xx", "blah", "hey", "yo"};
-        quickSort(words);
-        Arrays.stream(words).forEach(System.out::println);
+        //quickSort(words);
+        //Arrays.stream(words).forEach(System.out::println);
+        Arrays.stream(mergeSort(words,0, words.length)).forEach(System.out::println);
     }
 }
