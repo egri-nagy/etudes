@@ -11,3 +11,18 @@
 
 ;; can we do it without lazy-seq? yes!
 (take 42 (iterate inc 0))
+
+;; a lazy list of the rationals with repetitions
+;; enumerated by the zig-zag diagonal method
+;; defining a step function and using iterate to create lazy list
+;; m - enumerator, n - denominator, dir - direction
+(defn repetitive-rationals
+  []
+  (let [step
+        (fn [[m n dir]]
+          (cond (and (= dir :down) (= m 1)) [m (inc n) :up]
+                (and (= dir :up) (= n 1))   [(inc m) n :down]
+                (= dir :up)                 [(inc m) (dec n) :up]
+                :else                       [(dec m) (inc n) :down]))]
+    (map (fn [[m n]] (/ m n))
+         (iterate step [1 1 :down]))))
