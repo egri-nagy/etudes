@@ -14,6 +14,9 @@
 ;; caddr -> frr -> 3rd
 ;; cadar -> frf
 ;; caddar -> frrf
+;; evcon -> evcond
+;; evlis -> evlist
+;; assoc -> lookup
 
 ;; empty list considered as nil and false as well
 (defn nil? (x)
@@ -42,41 +45,39 @@
          (cons (list (first x) (first y))
                (pair (rest x) (rest y))))))
 
-(defn assoc (x y)
-  (cond ((= (ff y) x) (frf y))
-        ('T (assoc x (rest y)))))
+;; x atom, y list of pairs, table lookup
+(defn lookup (x y)
+  (cond (= (ff y) x) (frf y)
+        'T (lookup x (rest y))))
 
+;;e expression, a environment as pairs
 (defn eval (e a)
   (cond
-    ((atom e) (assoc e a))
-    ((atom (first e))
+    (atom e) (lookup e a)
+    (atom (first e))
      (cond
-       ((= (first e) 'quote) (2nd e))
-       ((= (first e) 'atom)  (atom   (eval (2nd e) a)))
-       ((= (first e) '=)    (=     (eval (2nd e) a)
-                                    (eval (3rd e) a)))
-       ((= (first e) 'first)   (first    (eval (2nd e) a)))
-       ((= (first e) 'rest)   (rest    (eval (2nd e) a)))
-       ((= (first e) 'cons)  (cons   (eval (2nd e) a)
-                                    (eval (3rd e) a)))
-       ((= (first e) 'cond)  (evcon (rest e) a))
-       ('T (eval (cons (assoc (first e) a)
-                        (rest e))
-                  a))))
-    ((= (ff e) 'label)
-     (eval (cons (frrf e) (rest e))
-            (cons (list (frf e) (first e)) a)))
-    ((= (ff e) 'lambda)
-     (eval (frrf e)
-            (append (pair (frf e) (evlis (rest e) a))
-                     a)))))
+       (= (first e) 'quote) (2nd e)
+       (= (first e) 'atom)  (atom (eval (2nd e) a))
+       (= (first e) '=)     (= (eval (2nd e) a)
+                               (eval (3rd e) a))
+       (= (first e) 'first)   (first    (eval (2nd e) a))
+       (= (first e) 'rest)   (rest    (eval (2nd e) a))
+       (= (first e) 'cons)  (cons (eval (2nd e) a)
+                                  (eval (3rd e) a))
+       (= (first e) 'cond)  (evcond (rest e) a)
+       ('T (eval (cons (lookup (first e) a)
+                        (rest e)) a)))
 
-(defn evcon (c a)
-  (cond ((eval (ff c) a)
-         (eval (frf c) a))
-        ('T (evcon (rest c) a))))
+     (= (ff e) 'label) (eval (cons (frrf e) (rest e))
+                             (cons (list (frf e) (first e)) a))
+     (= (ff e) 'lambda) (eval (frrf e)
+                              (append (pair (frf e) (evlist (rest e) a)) a))))
 
-(defn evlis (m a)
-  (cond ((nil? m) '())
-        ('T (cons (eval  (first m) a)
-                  (evlis (rest m) a)))))
+(defn evcond (c a)
+  (cond (eval (first c) a) (eval (2nd c) a)
+        'T (evcond (rest (rest c)) a)))
+
+(defn evlist (m a)
+  (cond (nil? m) '()
+        'T (cons (eval  (first m) a)
+                  (evlist (rest m) a))))
