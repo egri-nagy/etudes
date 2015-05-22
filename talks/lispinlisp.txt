@@ -8,21 +8,24 @@
 ;; null -> nil?
 ;; defun -> defn
 ;; *. -> *
+;; t -> T
 
+;; empty list considered as nil and false as well
 (defn nil? (x)
   (= x '()))
 
 (defn and (x y)
-  (cond (x (cond (y 't) ('t '())))
-        ('t '())))
+  (cond x  (cond y  'T
+                 'T '())
+        'T '()))
 
 (defn not (x)
-  (cond (x '())
-        ('t 't)))
+  (cond x  '()
+        'T 'T))
 
 (defn append (x y)
-  (cond ((nil? x) y)
-        ('t (cons (first x) (append (rest x) y)))))
+  (cond (nil? x) y
+        'T       (cons (first x) (append (rest x) y))))
 
 (defn list (x y)
   (cons x (cons y '())))
@@ -35,7 +38,7 @@
 
 (defn assoc (x y)
   (cond ((= (caar y) x) (cadar y))
-        ('t (assoc x (rest y)))))
+        ('T (assoc x (rest y)))))
 
 (defn eval (e a)
   (cond
@@ -51,7 +54,7 @@
        ((= (first e) 'cons)  (cons   (eval (cadr e) a)
                                     (eval (caddr e) a)))
        ((= (first e) 'cond)  (evcon (rest e) a))
-       ('t (eval (cons (assoc (first e) a)
+       ('T (eval (cons (assoc (first e) a)
                         (rest e))
                   a))))
     ((= (caar e) 'label)
@@ -65,9 +68,9 @@
 (defn evcon (c a)
   (cond ((eval (caar c) a)
          (eval (cadar c) a))
-        ('t (evcon (rest c) a))))
+        ('T (evcon (rest c) a))))
 
 (defn evlis (m a)
   (cond ((nil? m) '())
-        ('t (cons (eval  (first m) a)
+        ('T (cons (eval  (first m) a)
                   (evlis (rest m) a)))))

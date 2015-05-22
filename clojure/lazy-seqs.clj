@@ -8,3 +8,6 @@
 
 ;; it is a function, so you have to call it to get the list
 (take 42 (naturals))
+
+;; can we do it without lazy-seq? yes!
+(take 42 (iterate inc 0))
