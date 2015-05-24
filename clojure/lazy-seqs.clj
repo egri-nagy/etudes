@@ -26,3 +26,9 @@
                 :else                       [(dec m) (inc n) :down]))]
     (map (fn [[m n]] (/ m n))
          (iterate step [1 1 :down]))))
+
+(defn pascal-triangle
+  [v]
+  (concat [1]  (map #(apply + %) (partition 2 1 v)) [1]))
+
+(take 5 (iterate pascal-triangle [1]))
